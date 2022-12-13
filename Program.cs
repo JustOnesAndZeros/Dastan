@@ -33,14 +33,15 @@ namespace Dastan
 
         public Dastan(int R, int C, int NoOfPieces)
         {
+            //creates players and their direction on the board
             Players.Add(new Player("Player One", 1));
             Players.Add(new Player("Player Two", -1));
-            CreateMoveOptions();
+            CreateMoveOptions(); //creates the list of options for each player
             NoOfRows = R;
             NoOfColumns = C;
             MoveOptionOfferPosition = 0;
-            CreateMoveOptionOffer();
-            CreateBoard();
+            CreateMoveOptionOffer(); //creates list of possible offers
+            CreateBoard(); //creates baord
             CreatePieces(NoOfPieces);
             CurrentPlayer = Players[0];
         }
@@ -202,6 +203,8 @@ namespace Dastan
             int ReplaceChoice;
             Console.Write("Choose the move option from your queue to replace (1 to 5): ");
             ReplaceChoice = Convert.ToInt32(Console.ReadLine()); //input which move the user should replace
+            //ReplaceChoice - 1 is the index of the choice being replaced
+            //
             CurrentPlayer.UpdateMoveOptionQueueWithOffer(ReplaceChoice - 1, CreateMoveOption(MoveOptionOffer[MoveOptionOfferPosition], CurrentPlayer.GetDirection()));
             CurrentPlayer.ChangeScore(-(10 - (ReplaceChoice * 2)));
             MoveOptionOfferPosition = RGen.Next(0, 5);
@@ -244,7 +247,7 @@ namespace Dastan
                 {
                     Console.Write("Choose move option to use from queue (1 to 3) or 9 to take the offer: ");
                     Choice = Convert.ToInt32(Console.ReadLine()); //input number
-                    if (Choice == 9)
+                    if (Choice == 9) //if player chooses to take the offer
                     {
                         UseMoveOptionOffer();
                         DisplayState();
@@ -312,22 +315,22 @@ namespace Dastan
         private void CreateBoard()
         {
             Square S;
-            Board = new List<Square>();
-            for (int Row = 1; Row <= NoOfRows; Row++)
+            Board = new List<Square>(); //board is a 1D list of squares
+            for (int Row = 1; Row <= NoOfRows; Row++) //iterates through rows
             {
-                for (int Column = 1; Column <= NoOfColumns; Column++)
+                for (int Column = 1; Column <= NoOfColumns; Column++) //iterates through columns
                 {
                     if (Row == 1 && Column == NoOfColumns / 2)
                     {
-                        S = new Kotla(Players[0], "K");
+                        S = new Kotla(Players[0], "K"); //places p1 kotla in the middle of the top row
                     }
                     else if (Row == NoOfRows && Column == NoOfColumns / 2 + 1)
                     {
-                        S = new Kotla(Players[1], "k");
+                        S = new Kotla(Players[1], "k"); //places p2 kotla in the middle of the bottom row
                     }
                     else
                     {
-                        S = new Square();
+                        S = new Square(); //creates empty square everywhere else
                     }
                     Board.Add(S);
                 }
@@ -339,22 +342,23 @@ namespace Dastan
             Piece CurrentPiece;
             for (int Count = 1; Count <= NoOfPieces; Count++)
             {
-                CurrentPiece = new Piece("piece", Players[0], 1, "!");
-                Board[GetIndexOfSquare(2 * 10 + Count + 1)].SetPiece(CurrentPiece);
+                CurrentPiece = new Piece("piece", Players[0], 1, "!"); //creates pieces for player 1 with ! symbol
+                Board[GetIndexOfSquare(2 * 10 + Count + 1)].SetPiece(CurrentPiece); //sets pieces on the second row from the top to the current peice
             }
-            CurrentPiece = new Piece("mirza", Players[0], 5, "1");
-            Board[GetIndexOfSquare(10 + NoOfColumns / 2)].SetPiece(CurrentPiece);
+            CurrentPiece = new Piece("mirza", Players[0], 5, "1"); //create player 1 mirza with symbol 1
+            Board[GetIndexOfSquare(10 + NoOfColumns / 2)].SetPiece(CurrentPiece); //sets mirza to middle of the top row
             for (int Count = 1; Count <= NoOfPieces; Count++)
             {
-                CurrentPiece = new Piece("piece", Players[1], 1, "\"");
-                Board[GetIndexOfSquare((NoOfRows - 1) * 10 + Count + 1)].SetPiece(CurrentPiece);
+                CurrentPiece = new Piece("piece", Players[1], 1, "\""); //creates pieces for player 2 with " symbol
+                Board[GetIndexOfSquare((NoOfRows - 1) * 10 + Count + 1)].SetPiece(CurrentPiece); //sets pieces on the second row from the bottom to the current peice
             }
-            CurrentPiece = new Piece("mirza", Players[1], 5, "2");
-            Board[GetIndexOfSquare(NoOfRows * 10 + (NoOfColumns / 2 + 1))].SetPiece(CurrentPiece);
+            CurrentPiece = new Piece("mirza", Players[1], 5, "2"); //create player 2 mirza with symbol 2
+            Board[GetIndexOfSquare(NoOfRows * 10 + (NoOfColumns / 2 + 1))].SetPiece(CurrentPiece); //sets mirza to middle of the bottom row
         }
 
         private void CreateMoveOptionOffer()
         {
+            //adds all 5 offers to move option offer list
             MoveOptionOffer.Add("jazair");
             MoveOptionOffer.Add("chowkidar");
             MoveOptionOffer.Add("cuirassier");
@@ -364,14 +368,15 @@ namespace Dastan
 
         private MoveOption CreateRyottMoveOption(int Direction)
         {
-            MoveOption NewMoveOption = new MoveOption("ryott");
-            Move NewMove = new Move(0, 1 * Direction);
+            MoveOption NewMoveOption = new MoveOption("ryott"); //create move option called ryott
+            //add all possible moves for this option to list, column is multiplied by direction because player 1 and player 2 move in opposite directions
+            Move NewMove = new Move(0, 1 * Direction); //1 right
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(0, -1 * Direction);
+            NewMove = new Move(0, -1 * Direction); //1 left
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(1 * Direction, 0);
+            NewMove = new Move(1 * Direction, 0); //1 forward
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(-1 * Direction, 0);
+            NewMove = new Move(-1 * Direction, 0); //1 backwards
             NewMoveOption.AddToPossibleMoves(NewMove);
             return NewMoveOption;
         }
@@ -379,13 +384,13 @@ namespace Dastan
         private MoveOption CreateFaujdarMoveOption(int Direction)
         {
             MoveOption NewMoveOption = new MoveOption("faujdar");
-            Move NewMove = new Move(0, -1 * Direction);
+            Move NewMove = new Move(0, -1 * Direction); //1 backwards
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(0, 1 * Direction);
+            NewMove = new Move(0, 1 * Direction); //1 forward
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(0, 2 * Direction);
+            NewMove = new Move(0, 2 * Direction); //2 right
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(0, -2 * Direction);
+            NewMove = new Move(0, -2 * Direction); //2 left
             NewMoveOption.AddToPossibleMoves(NewMove);
             return NewMoveOption;
         }
@@ -393,19 +398,19 @@ namespace Dastan
         private MoveOption CreateJazairMoveOption(int Direction)
         {
             MoveOption NewMoveOption = new MoveOption("jazair");
-            Move NewMove = new Move(2 * Direction, 0);
+            Move NewMove = new Move(2 * Direction, 0); //2 forward
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(2 * Direction, -2 * Direction);
+            NewMove = new Move(2 * Direction, -2 * Direction); //2 forward, 2 left
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(2 * Direction, 2 * Direction);
+            NewMove = new Move(2 * Direction, 2 * Direction); //2 forward, 2 right
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(0, 2 * Direction);
+            NewMove = new Move(0, 2 * Direction); //2 right
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(0, -2 * Direction);
+            NewMove = new Move(0, -2 * Direction); //2 left
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(-1 * Direction, -1 * Direction);
+            NewMove = new Move(-1 * Direction, -1 * Direction); //1 backwards, 1 left
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(-1 * Direction, 1 * Direction);
+            NewMove = new Move(-1 * Direction, 1 * Direction); // 1 backwards, 1 right
             NewMoveOption.AddToPossibleMoves(NewMove);
             return NewMoveOption;
         }
@@ -413,13 +418,13 @@ namespace Dastan
         private MoveOption CreateCuirassierMoveOption(int Direction)
         {
             MoveOption NewMoveOption = new MoveOption("cuirassier");
-            Move NewMove = new Move(1 * Direction, 0);
+            Move NewMove = new Move(1 * Direction, 0); //1 forward
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(2 * Direction, 0);
+            NewMove = new Move(2 * Direction, 0); //2 forward
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(1 * Direction, -2 * Direction);
+            NewMove = new Move(1 * Direction, -2 * Direction); //1 forward, 2 left
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(1 * Direction, 2 * Direction);
+            NewMove = new Move(1 * Direction, 2 * Direction); //1 forward, 2 right
             NewMoveOption.AddToPossibleMoves(NewMove);
             return NewMoveOption;
         }
@@ -427,17 +432,17 @@ namespace Dastan
         private MoveOption CreateChowkidarMoveOption(int Direction)
         {
             MoveOption NewMoveOption = new MoveOption("chowkidar");
-            Move NewMove = new Move(1 * Direction, 1 * Direction);
+            Move NewMove = new Move(1 * Direction, 1 * Direction); //1 forward, 1 right
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(1 * Direction, -1 * Direction);
+            NewMove = new Move(1 * Direction, -1 * Direction); //1 forward, 1 left
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(-1 * Direction, 1 * Direction);
+            NewMove = new Move(-1 * Direction, 1 * Direction); //1 backwards, 1 right
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(-1 * Direction, -1 * Direction);
+            NewMove = new Move(-1 * Direction, -1 * Direction); //1 backwards, 1 left
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(0, 2 * Direction);
+            NewMove = new Move(0, 2 * Direction); //2 right
             NewMoveOption.AddToPossibleMoves(NewMove);
-            NewMove = new Move(0, -2 * Direction);
+            NewMove = new Move(0, -2 * Direction); //2 left
             NewMoveOption.AddToPossibleMoves(NewMove);
             return NewMoveOption;
         }
