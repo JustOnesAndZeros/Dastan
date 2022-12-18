@@ -1,12 +1,13 @@
-﻿//Skeleton Program code for the AQA A Level Paper 1 Summer 2023 examination
+﻿// ReSharper disable All
+#pragma warning disable CS8625
+
+//Skeleton Program code for the AQA A Level Paper 1 Summer 2023 examination
 //this code should be used in conjunction with the Preliminary Material
 //written by the AQA Programmer Team
 //developed in the Visual Studio Community Edition programming environment
 
 using System;
 using System.Collections.Generic;
-// ReSharper disable All
-#pragma warning disable CS8625
 
 namespace Dastan
 {
@@ -14,10 +15,10 @@ namespace Dastan
     {
         static void Main(string[] args)
         {
-            Dastan ThisGame = new Dastan(6, 6, 4);
-            ThisGame.PlayGame();
+            Dastan ThisGame = new Dastan(6, 6, 4); //creates new game with 6x6 board and 4 pieces
+            ThisGame.PlayGame(); //start game
             Console.WriteLine("Goodbye!");
-            Console.ReadLine();
+            Console.ReadLine(); //asks for user input so the program doesn't close until the user presses enter
         }
     }
 
@@ -44,62 +45,62 @@ namespace Dastan
             CurrentPlayer = Players[0];
         }
 
-        private void DisplayBoard()
+        private void DisplayBoard() //displays the board probably
         {
-            Console.Write(Environment.NewLine + "   ");
-            for (int Column = 1; Column <= NoOfColumns; Column++)
+            Console.Write(Environment.NewLine + "   "); //prints new line
+            for (int Column = 1; Column <= NoOfColumns; Column++) //iterates through the columns
             {
-                Console.Write(Column.ToString() + "  ");
+                Console.Write(Column.ToString() + "  "); //numbers the columns 1 2 3 4 5 6
             }
-            Console.Write(Environment.NewLine + "  ");
-            for (int Count = 1; Count <= NoOfColumns; Count++)
+            Console.Write(Environment.NewLine + "  "); //new line
+            for (int Count = 1; Count <= NoOfColumns; Count++) 
             {
-                Console.Write("---");
+                Console.Write("---"); //prints top line -------------------
             }
-            Console.WriteLine("-");
-            for (int Row = 1; Row <= NoOfRows; Row++)
+            Console.WriteLine("-"); //prints another - for the aesthetic
+            for (int Row = 1; Row <= NoOfRows; Row++) //iterates through rows
             {
-                Console.Write(Row.ToString() + " ");
-                for (int Column = 1; Column <= NoOfColumns; Column++)
+                Console.Write(Row.ToString() + " "); //prints row number 
+                for (int Column = 1; Column <= NoOfColumns; Column++) //iterates through columns
                 {
-                    int Index = GetIndexOfSquare(Row * 10 + Column);
-                    Console.Write("|" + Board[Index].GetSymbol());
-                    Piece PieceInSquare = Board[Index].GetPieceInSquare();
+                    int Index = GetIndexOfSquare(Row * 10 + Column); //pass row and column as 2 digit number and get position in board list
+                    Console.Write("|" + Board[Index].GetSymbol()); //print left square dividing line and the k/K symbol if there is one (space if not)
+                    Piece PieceInSquare = Board[Index].GetPieceInSquare(); //gets the piece in that square
                     if (PieceInSquare == null)
                     {
-                        Console.Write(" ");
+                        Console.Write(" "); //if no piece then print blank space
                     }
                     else
                     {
-                        Console.Write(PieceInSquare.GetSymbol());
+                        Console.Write(PieceInSquare.GetSymbol()); //print the symbol of piece if there is one
                     }
                 }
-                Console.WriteLine("|");
+                Console.WriteLine("|"); //print right edge of board
             }
-            Console.Write("  -");
+            Console.Write("  -"); //print offset for drawing bottom line on board
             for (int Column = 1; Column <= NoOfColumns; Column++)
             {
-                Console.Write("---");
+                Console.Write("---"); //draw line for each column
             }
+            Console.WriteLine(); //create two new lines
+            Console.WriteLine(); //create two new lines
+        }
+
+        private void DisplayState() //outputs game state to console
+        {
+            DisplayBoard(); //prints the current board state to the screen
+            Console.WriteLine("Move option offer: " + MoveOptionOffer[MoveOptionOfferPosition]); //prints offer for this turn
             Console.WriteLine();
+            Console.WriteLine(CurrentPlayer.GetPlayerStateAsString()); //print state of current player
+            Console.WriteLine("Turn: " + CurrentPlayer.GetName()); //print which player's turn it is
             Console.WriteLine();
         }
 
-        private void DisplayState()
+        private int GetIndexOfSquare(int SquareReference) //converts 2 digit number RC into position in board list
         {
-            DisplayBoard();
-            Console.WriteLine("Move option offer: " + MoveOptionOffer[MoveOptionOfferPosition]);
-            Console.WriteLine();
-            Console.WriteLine(CurrentPlayer.GetPlayerStateAsString());
-            Console.WriteLine("Turn: " + CurrentPlayer.GetName());
-            Console.WriteLine();
-        }
-
-        private int GetIndexOfSquare(int SquareReference)
-        {
-            int Row = SquareReference / 10;
-            int Col = SquareReference % 10;
-            return (Row - 1) * NoOfColumns + (Col - 1);
+            int Row = SquareReference / 10; //gets first digit (row)
+            int Col = SquareReference % 10; //gets second digit (column)
+            return (Row - 1) * NoOfColumns + (Col - 1); //converts into list position
         }
 
         private bool CheckSquareInBounds(int SquareReference)
@@ -200,7 +201,7 @@ namespace Dastan
         {
             int ReplaceChoice;
             Console.Write("Choose the move option from your queue to replace (1 to 5): ");
-            ReplaceChoice = Convert.ToInt32(Console.ReadLine());
+            ReplaceChoice = Convert.ToInt32(Console.ReadLine()); //input which move the user should replace
             CurrentPlayer.UpdateMoveOptionQueueWithOffer(ReplaceChoice - 1, CreateMoveOption(MoveOptionOffer[MoveOptionOfferPosition], CurrentPlayer.GetDirection()));
             CurrentPlayer.ChangeScore(-(10 - (ReplaceChoice * 2)));
             MoveOptionOfferPosition = RGen.Next(0, 5);
@@ -230,18 +231,19 @@ namespace Dastan
             return 0;
         }
 
-        public void PlayGame()
+        public void PlayGame() //runs at start of game
         {
+            //loops until GameOver == true
             bool GameOver = false;
             while (!GameOver)
             {
-                DisplayState();
+                DisplayState(); //display game's current state
                 bool SquareIsValid = false;
                 int Choice;
                 do
                 {
                     Console.Write("Choose move option to use from queue (1 to 3) or 9 to take the offer: ");
-                    Choice = Convert.ToInt32(Console.ReadLine());
+                    Choice = Convert.ToInt32(Console.ReadLine()); //input number
                     if (Choice == 9)
                     {
                         UseMoveOptionOffer();
@@ -738,7 +740,7 @@ namespace Dastan
             }
         }
 
-        public string GetPlayerStateAsString()
+        public string GetPlayerStateAsString() //returns a string displaying the name, score, move queue
         {
             return Name + Environment.NewLine + "Score: " + Score.ToString() + Environment.NewLine + "Move option queue: " + Queue.GetQueueAsString() + Environment.NewLine;
         }
