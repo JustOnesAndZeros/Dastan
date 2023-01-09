@@ -255,29 +255,39 @@ namespace Dastan
                     }
                 }
                 while (Choice < 1 || Choice > 3);
-                int StartSquareReference = 0;
-                while (!SquareIsValid)
+                bool MoveLegal;
+                do
                 {
-                    StartSquareReference = GetSquareReference("containing the piece to move");
-                    SquareIsValid = CheckSquareIsValid(StartSquareReference, true);
+                    int StartSquareReference = 0;
+                    while (!SquareIsValid)
+                    {
+                        StartSquareReference = GetSquareReference("containing the piece to move");
+                        SquareIsValid = CheckSquareIsValid(StartSquareReference, true);
+                    }
+                    int FinishSquareReference = 0;
+                    SquareIsValid = false;
+                    while (!SquareIsValid)
+                    {
+                        FinishSquareReference = GetSquareReference("to move to");
+                        SquareIsValid = CheckSquareIsValid(FinishSquareReference, false);
+                    }
+                    SquareIsValid = false; //
+                    MoveLegal = CurrentPlayer.CheckPlayerMove(Choice, StartSquareReference, FinishSquareReference);
+                    if (MoveLegal)
+                    {
+                        int PointsForPieceCapture = CalculatePieceCapturePoints(FinishSquareReference);
+                        CurrentPlayer.ChangeScore(-(Choice + (2 * (Choice - 1))));
+                        CurrentPlayer.UpdateQueueAfterMove(Choice);
+                        UpdateBoard(StartSquareReference, FinishSquareReference);
+                        UpdatePlayerScore(PointsForPieceCapture);
+                        Console.WriteLine("New score: " + CurrentPlayer.GetScore() + Environment.NewLine);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Illegal move");
+                    }
                 }
-                int FinishSquareReference = 0;
-                SquareIsValid = false;
-                while (!SquareIsValid)
-                {
-                    FinishSquareReference = GetSquareReference("to move to");
-                    SquareIsValid = CheckSquareIsValid(FinishSquareReference, false);
-                }
-                bool MoveLegal = CurrentPlayer.CheckPlayerMove(Choice, StartSquareReference, FinishSquareReference);
-                if (MoveLegal)
-                {
-                    int PointsForPieceCapture = CalculatePieceCapturePoints(FinishSquareReference);
-                    CurrentPlayer.ChangeScore(-(Choice + (2 * (Choice - 1))));
-                    CurrentPlayer.UpdateQueueAfterMove(Choice);
-                    UpdateBoard(StartSquareReference, FinishSquareReference);
-                    UpdatePlayerScore(PointsForPieceCapture);
-                    Console.WriteLine("New score: " + CurrentPlayer.GetScore() + Environment.NewLine);
-                }
+                while (!MoveLegal);
                 if (CurrentPlayer.SameAs(Players[0]))
                 {
                     CurrentPlayer = Players[1];
