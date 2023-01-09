@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace Dastan
 {
@@ -106,8 +107,8 @@ namespace Dastan
 
         private bool CheckSquareInBounds(int SquareReference)
         {
-            int Row = SquareReference / 10;
-            int Col = SquareReference % 10;
+            int Row = SquareReference / 10; 
+            int Col = SquareReference % 10; 
             if (Row < 1 || Row > NoOfRows)
             {
                 return false;
@@ -641,13 +642,14 @@ namespace Dastan
 
         public bool CheckIfThereIsAMoveToSquare(int StartSquareReference, int FinishSquareReference)
         {
+            //get start/finish coords
             int StartRow = StartSquareReference / 10;
             int StartColumn = StartSquareReference % 10;
             int FinishRow = FinishSquareReference / 10;
             int FinishColumn = FinishSquareReference % 10;
             foreach (var M in PossibleMoves)
             {
-                if (StartRow + M.GetRowChange() == FinishRow && StartColumn + M.GetColumnChange() == FinishColumn)
+                if (StartRow + M.GetRowChange() == FinishRow && StartColumn + M.GetColumnChange() == FinishColumn) //check 
                 {
                     return true;
                 }
@@ -729,13 +731,13 @@ namespace Dastan
             Direction = D;
         }
 
-        public bool SameAs(Player APlayer)
+        public bool SameAs(Player APlayer) //check if this player is the same as the passed in player
         {
             if (APlayer == null)
             {
                 return false;
             }
-            else if (APlayer.GetName() == Name)
+            else if (APlayer.GetName() == Name) //if the players have the same name then they are the same
             {
                 return true;
             }
@@ -787,8 +789,8 @@ namespace Dastan
 
         public bool CheckPlayerMove(int Pos, int StartSquareReference, int FinishSquareReference)
         {
-            MoveOption Temp = Queue.GetMoveOptionInPosition(Pos - 1);
-            return Temp.CheckIfThereIsAMoveToSquare(StartSquareReference, FinishSquareReference);
+            MoveOption Temp = Queue.GetMoveOptionInPosition(Pos - 1); //get selected move option
+            return Temp.CheckIfThereIsAMoveToSquare(StartSquareReference, FinishSquareReference); //
         }
     }
 }
