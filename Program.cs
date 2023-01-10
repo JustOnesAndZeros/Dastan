@@ -191,16 +191,14 @@ namespace Dastan
         private int GetSquareReference(string Description)
         {
             int SelectedSquare;
-            Console.Write("Enter the square " + Description + " (row number followed by column number): ");
-            SelectedSquare = InputInt();
+            SelectedSquare = InputInt("Enter the square " + Description + " (row number followed by column number): ");
             return SelectedSquare;
         }
 
         private void UseMoveOptionOffer()
         {
             int ReplaceChoice;
-            Console.Write("Choose the move option from your queue to replace (1 to 5): ");
-            ReplaceChoice = InputInt();
+            ReplaceChoice = InputInt("Choose the move option from your queue to replace (1 to 5): ");
             CurrentPlayer.UpdateMoveOptionQueueWithOffer(ReplaceChoice - 1, CreateMoveOption(MoveOptionOffer[MoveOptionOfferPosition], CurrentPlayer.GetDirection()));
             CurrentPlayer.ChangeScore(-(10 - (ReplaceChoice * 2)));
             MoveOptionOfferPosition = RGen.Next(0, 5);
@@ -240,8 +238,7 @@ namespace Dastan
                 int Choice;
                 do
                 {
-                    Console.Write("Choose move option to use from queue (1 to 3) or 9 to take the offer: ");
-                    Choice = InputInt();
+                    Choice = InputInt("Choose move option to use from queue (1 to 3) or 9 to take the offer: ");
                     if (Choice == 9)
                     {
                         UseMoveOptionOffer();
@@ -286,18 +283,19 @@ namespace Dastan
             DisplayFinalResult();
         }
 
-        private int InputInt()
+        private int InputInt(string prompt)
         {
             while (true)
             {
                 try
                 {
+                    Console.Write(prompt);
                     int input = Convert.ToInt32(Console.ReadLine());
                     return input;
                 }
                 catch
                 {
-                    Console.Write("Invalid input. Please try again: ");
+                    
                 }
             }
         }
