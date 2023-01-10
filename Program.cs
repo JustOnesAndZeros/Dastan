@@ -242,35 +242,37 @@ namespace Dastan
                 {
                     Console.Write("Choose move option to use from queue (1 to 3) or 9 to take the offer: ");
                     Choice = Convert.ToInt32(Console.ReadLine());
-                    if (Choice == 9)
+                }
+                while ((Choice < 1 || Choice > 3) && Choice != 9);
+                if (Choice == 9)
+                {
+                    UseMoveOptionOffer();
+                }
+                else
+                {
+                    int StartSquareReference = 0;
+                    while (!SquareIsValid)
                     {
-                        UseMoveOptionOffer();
-                        DisplayState();
+                        StartSquareReference = GetSquareReference("containing the piece to move");
+                        SquareIsValid = CheckSquareIsValid(StartSquareReference, true);
                     }
-                }
-                while (Choice < 1 || Choice > 3);
-                int StartSquareReference = 0;
-                while (!SquareIsValid)
-                {
-                    StartSquareReference = GetSquareReference("containing the piece to move");
-                    SquareIsValid = CheckSquareIsValid(StartSquareReference, true);
-                }
-                int FinishSquareReference = 0;
-                SquareIsValid = false;
-                while (!SquareIsValid)
-                {
-                    FinishSquareReference = GetSquareReference("to move to");
-                    SquareIsValid = CheckSquareIsValid(FinishSquareReference, false);
-                }
-                bool MoveLegal = CurrentPlayer.CheckPlayerMove(Choice, StartSquareReference, FinishSquareReference);
-                if (MoveLegal)
-                {
-                    int PointsForPieceCapture = CalculatePieceCapturePoints(FinishSquareReference);
-                    CurrentPlayer.ChangeScore(-(Choice + (2 * (Choice - 1))));
-                    CurrentPlayer.UpdateQueueAfterMove(Choice);
-                    UpdateBoard(StartSquareReference, FinishSquareReference);
-                    UpdatePlayerScore(PointsForPieceCapture);
-                    Console.WriteLine("New score: " + CurrentPlayer.GetScore() + Environment.NewLine);
+                    int FinishSquareReference = 0;
+                    SquareIsValid = false;
+                    while (!SquareIsValid)
+                    {
+                        FinishSquareReference = GetSquareReference("to move to");
+                        SquareIsValid = CheckSquareIsValid(FinishSquareReference, false);
+                    }
+                    bool MoveLegal = CurrentPlayer.CheckPlayerMove(Choice, StartSquareReference, FinishSquareReference);
+                    if (MoveLegal)
+                    {
+                        int PointsForPieceCapture = CalculatePieceCapturePoints(FinishSquareReference);
+                        CurrentPlayer.ChangeScore(-(Choice + (2 * (Choice - 1))));
+                        CurrentPlayer.UpdateQueueAfterMove(Choice);
+                        UpdateBoard(StartSquareReference, FinishSquareReference);
+                        UpdatePlayerScore(PointsForPieceCapture);
+                        Console.WriteLine("New score: " + CurrentPlayer.GetScore() + Environment.NewLine);
+                    }
                 }
                 if (CurrentPlayer.SameAs(Players[0]))
                 {
