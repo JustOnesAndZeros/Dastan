@@ -199,8 +199,19 @@ namespace Dastan
         private void UseMoveOptionOffer()
         {
             int ReplaceChoice;
-            Console.Write("Choose the move option from your queue to replace (1 to 5): ");
-            ReplaceChoice = Convert.ToInt32(Console.ReadLine());
+            do
+            {
+                try
+                {
+                    Console.Write("Choose the move option from your queue to replace (1 to 5): ");
+                    ReplaceChoice = Convert.ToInt32(Console.ReadLine());
+                }
+                catch
+                {
+                    ReplaceChoice = 0;
+                }
+            }
+            while (ReplaceChoice is < 1 or > 5);
             CurrentPlayer.UpdateMoveOptionQueueWithOffer(ReplaceChoice - 1, CreateMoveOption(MoveOptionOffer[MoveOptionOfferPosition], CurrentPlayer.GetDirection()));
             CurrentPlayer.ChangeScore(-(10 - (ReplaceChoice * 2)));
             MoveOptionOfferPosition = RGen.Next(0, 5);
@@ -284,6 +295,22 @@ namespace Dastan
             }
             DisplayState();
             DisplayFinalResult();
+        }
+        
+        private int InputInt()
+        {
+            while (true)
+            {
+                try
+                {
+                    int input = Convert.ToInt32(Console.ReadLine());
+                    return input;
+                }
+                catch
+                {
+                    Console.Write("Invalid input. Please try again: ");
+                }
+            }
         }
 
         private void UpdateBoard(int StartSquareReference, int FinishSquareReference)
