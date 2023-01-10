@@ -192,7 +192,7 @@ namespace Dastan
         {
             int SelectedSquare;
             Console.Write("Enter the square " + Description + " (row number followed by column number): ");
-            SelectedSquare = Convert.ToInt32(Console.ReadLine());
+            SelectedSquare = InputInt();
             return SelectedSquare;
         }
 
@@ -200,7 +200,7 @@ namespace Dastan
         {
             int ReplaceChoice;
             Console.Write("Choose the move option from your queue to replace (1 to 5): ");
-            ReplaceChoice = Convert.ToInt32(Console.ReadLine());
+            ReplaceChoice = InputInt();
             CurrentPlayer.UpdateMoveOptionQueueWithOffer(ReplaceChoice - 1, CreateMoveOption(MoveOptionOffer[MoveOptionOfferPosition], CurrentPlayer.GetDirection()));
             CurrentPlayer.ChangeScore(-(10 - (ReplaceChoice * 2)));
             MoveOptionOfferPosition = RGen.Next(0, 5);
@@ -241,7 +241,7 @@ namespace Dastan
                 do
                 {
                     Console.Write("Choose move option to use from queue (1 to 3) or 9 to take the offer: ");
-                    Choice = Convert.ToInt32(Console.ReadLine());
+                    Choice = InputInt();
                     if (Choice == 9)
                     {
                         UseMoveOptionOffer();
@@ -284,6 +284,22 @@ namespace Dastan
             }
             DisplayState();
             DisplayFinalResult();
+        }
+
+        private int InputInt()
+        {
+            while (true)
+            {
+                try
+                {
+                    int input = Convert.ToInt32(Console.ReadLine());
+                    return input;
+                }
+                catch
+                {
+                    Console.Write("Invalid input. Please try again: ");
+                }
+            }
         }
 
         private void UpdateBoard(int StartSquareReference, int FinishSquareReference)
