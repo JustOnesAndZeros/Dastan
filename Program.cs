@@ -353,11 +353,26 @@ namespace Dastan
 
         private void CreateMoveOptionOffer()
         {
+            MoveOptionOffer.Add("tibblecross");
             MoveOptionOffer.Add("jazair");
             MoveOptionOffer.Add("chowkidar");
             MoveOptionOffer.Add("cuirassier");
             MoveOptionOffer.Add("ryott");
             MoveOptionOffer.Add("faujdar");
+        }
+
+        private MoveOption CreateTibbleCrossMoveOption(int Direction)
+        {
+            MoveOption NewMoveOption = new MoveOption("tibblecross");
+            Move NewMove = new Move(2 * Direction, 2 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+            NewMove = new Move(-2 * Direction, 2 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+            NewMove = new Move(2 * Direction, -2 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+            NewMove = new Move(-2 * Direction, -2 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+            return NewMoveOption;
         }
 
         private MoveOption CreateRyottMoveOption(int Direction)
@@ -442,7 +457,11 @@ namespace Dastan
 
         private MoveOption CreateMoveOption(string Name, int Direction)
         {
-            if (Name == "chowkidar")
+            if (Name == "tibblecross")
+            {
+                return CreateTibbleCrossMoveOption(Direction);
+            }
+            else if (Name == "chowkidar")
             {
                 return CreateChowkidarMoveOption(Direction);
             }
@@ -462,15 +481,18 @@ namespace Dastan
             {
                 return CreateCuirassierMoveOption(Direction);
             }
+            
         }
 
         private void CreateMoveOptions()
         {
+            Players[0].AddToMoveOptionQueue(CreateMoveOption("tibblecross", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("ryott", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("chowkidar", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("cuirassier", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("faujdar", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("jazair", 1));
+            Players[1].AddToMoveOptionQueue(CreateMoveOption("tibblecross", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("ryott", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("chowkidar", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("jazair", -1));
