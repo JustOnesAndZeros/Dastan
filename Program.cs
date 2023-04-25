@@ -357,6 +357,7 @@ namespace Dastan
             MoveOptionOffer.Add("chowkidar");
             MoveOptionOffer.Add("cuirassier");
             MoveOptionOffer.Add("ryott");
+            MoveOptionOffer.Add("faris");
             MoveOptionOffer.Add("faujdar");
         }
 
@@ -370,6 +371,28 @@ namespace Dastan
             NewMove = new Move(1 * Direction, 0);
             NewMoveOption.AddToPossibleMoves(NewMove);
             NewMove = new Move(-1 * Direction, 0);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+            return NewMoveOption;
+        }
+        
+        private MoveOption CreateFarisMoveOption(int Direction)
+        {
+            MoveOption NewMoveOption = new MoveOption("faris");
+            Move NewMove = new Move(1 * Direction, 2 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+            NewMove = new Move(2 * Direction, 1 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+            NewMove = new Move(-1 * Direction, 2 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+            NewMove = new Move(-2 * Direction, 1 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+            NewMove = new Move(1 * Direction, -2 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+            NewMove = new Move(2 * Direction, -1 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+            NewMove = new Move(-1 * Direction, -2 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+            NewMove = new Move(-2 * Direction, -1 * Direction);
             NewMoveOption.AddToPossibleMoves(NewMove);
             return NewMoveOption;
         }
@@ -450,6 +473,10 @@ namespace Dastan
             {
                 return CreateRyottMoveOption(Direction);
             }
+            else if (Name == "faris")
+            {
+                return CreateFarisMoveOption(Direction);
+            }
             else if (Name == "faujdar")
             {
                 return CreateFaujdarMoveOption(Direction);
@@ -467,11 +494,13 @@ namespace Dastan
         private void CreateMoveOptions()
         {
             Players[0].AddToMoveOptionQueue(CreateMoveOption("ryott", 1));
+            Players[0].AddToMoveOptionQueue(CreateMoveOption("faris", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("chowkidar", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("cuirassier", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("faujdar", 1));
             Players[0].AddToMoveOptionQueue(CreateMoveOption("jazair", 1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("ryott", -1));
+            Players[1].AddToMoveOptionQueue(CreateMoveOption("faris", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("chowkidar", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("jazair", -1));
             Players[1].AddToMoveOptionQueue(CreateMoveOption("faujdar", -1));
