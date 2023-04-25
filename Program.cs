@@ -32,8 +32,7 @@ namespace Dastan
 
         public Dastan(int R, int C, int NoOfPieces)
         {
-            Players.Add(new Player("Player One", 1));
-            Players.Add(new Player("Player Two", -1));
+            CreateCustomPlayers();
             CreateMoveOptions();
             NoOfRows = R;
             NoOfColumns = C;
@@ -42,6 +41,28 @@ namespace Dastan
             CreateBoard();
             CreatePieces(NoOfPieces);
             CurrentPlayer = Players[0];
+        }
+
+        private void CreateCustomPlayers()
+        {
+            string p1Name = InputName("Player 1");
+            Players.Add(new Player(p1Name, 1));
+
+            string p2Name;
+            do { p2Name = InputName("Player 2"); }
+            while (p2Name == p1Name);
+            Players.Add(new Player(p2Name, -1));
+        }
+
+        private string InputName(string player)
+        {
+            string name = "";
+            while (name == "")
+            {
+                Console.Write($"Input {player} name: ");
+                name = Console.ReadLine();
+            }
+            return name;
         }
 
         private void DisplayBoard()
@@ -272,7 +293,7 @@ namespace Dastan
                     UpdatePlayerScore(PointsForPieceCapture);
                     Console.WriteLine("New score: " + CurrentPlayer.GetScore() + Environment.NewLine);
                 }
-                if (CurrentPlayer.SameAs(Players[0]))
+                if (CurrentPlayer.SameAs(Players[0])) //switch players at end of turn
                 {
                     CurrentPlayer = Players[1];
                 }
