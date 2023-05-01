@@ -101,7 +101,7 @@ namespace Dastan
             int Col = SquareReference % 10;
             return (Row - 1) * NoOfColumns + (Col - 1);
         }
-
+        
         private bool CheckSquareInBounds(int SquareReference)
         {
             int Row = SquareReference / 10;
@@ -236,11 +236,19 @@ namespace Dastan
             while (!GameOver)
             {
                 DisplayState();
+                int MaxQueuePosition = 3;
+                bool WafrAwarded = AwardWafr() && !CurrentPlayer.GetWafrAwarded();
+                if (WafrAwarded)
+                {
+                    Console.WriteLine("You have been awarded a Wafr, you can select any move from your queue for free this turn.");
+                    CurrentPlayer.SetWafrAwarded(WafrAwarded);
+                    MaxQueuePosition = 5;
+                }
                 bool SquareIsValid = false;
                 int Choice;
                 do
                 {
-                    Console.Write("Choose move option to use from queue (1 to 3) or 9 to take the offer: ");
+                    Console.Write("Choose move option to use from queue (1 to " + MaxQueuePosition + ") or 9 to take the offer: ");
                     Choice = Convert.ToInt32(Console.ReadLine());
                     if (Choice == 9)
                     {
@@ -248,7 +256,7 @@ namespace Dastan
                         DisplayState();
                     }
                 }
-                while (Choice < 1 || Choice > 3);
+                while (Choice < 1 || Choice > MaxQueuePosition);
                 int StartSquareReference = 0;
                 while (!SquareIsValid)
                 {
@@ -284,6 +292,11 @@ namespace Dastan
             }
             DisplayState();
             DisplayFinalResult();
+        }
+        
+        private bool AwardWafr()
+        {
+            return RGen.Next(4) == 0 ? true : false;
         }
 
         private void UpdateBoard(int StartSquareReference, int FinishSquareReference)
@@ -714,6 +727,7 @@ namespace Dastan
         private string Name;
         private int Direction, Score;
         private MoveOptionQueue Queue = new MoveOptionQueue();
+        private bool WafrAwarded;
 
         public Player(string N, int D)
         {
@@ -771,6 +785,16 @@ namespace Dastan
         public int GetDirection()
         {
             return Direction;
+        }
+
+        public bool GetWafrAwarded()
+        {
+            return WafrAwarded;
+        }
+
+        public void SetWafrAwarded(bool value)
+        {
+            WafrAwarded = value;
         }
 
         public void ChangeScore(int Amount)
