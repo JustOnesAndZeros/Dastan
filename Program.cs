@@ -233,9 +233,14 @@ namespace Dastan
         public void PlayGame()
         {
             bool GameOver = false;
+            int lastPlayerScore = 0;
+            int lastPlayerChoice = 0;
+            Dictionary<int, Piece> lastChangedSquares = new Dictionary<int, Piece>();
+
             while (!GameOver)
             {
                 DisplayState();
+
                 bool SquareIsValid = false;
                 int Choice;
                 do
@@ -265,12 +270,32 @@ namespace Dastan
                 bool MoveLegal = CurrentPlayer.CheckPlayerMove(Choice, StartSquareReference, FinishSquareReference);
                 if (MoveLegal)
                 {
+                    lastPlayerScore = CurrentPlayer.GetScore();
+                    lastPlayerChoice = Choice;
+                    int startIndex = GetIndexOfSquare(StartSquareReference);
+                    lastChangedSquares.Add(startIndex, Board[startIndex].GetPieceInSquare());
+                    int finishIndex = GetIndexOfSquare(FinishSquareReference);
+                    lastChangedSquares.Add(finishIndex, Board[finishIndex].GetPieceInSquare());
+
                     int PointsForPieceCapture = CalculatePieceCapturePoints(FinishSquareReference);
                     CurrentPlayer.ChangeScore(-(Choice + (2 * (Choice - 1))));
                     CurrentPlayer.UpdateQueueAfterMove(Choice);
                     UpdateBoard(StartSquareReference, FinishSquareReference);
                     UpdatePlayerScore(PointsForPieceCapture);
                     Console.WriteLine("New score: " + CurrentPlayer.GetScore() + Environment.NewLine);
+                    
+                    DisplayBoard();
+                    
+                    Console.Write("Do you want to undo your move? (y/n): ");
+                    string answer = Console.ReadLine();
+                    if (answer == "y")
+                    {
+                        CurrentPlayer.ChangeScore(lastPlayerScore - CurrentPlayer.GetScore());
+                        CurrentPlayer.ChangeScore(-5);
+                        CurrentPlayer.ResetQueueBackAfterUndo(lastPlayerChoice);
+                        foreach (KeyValuePair<int,Piece> kvp in lastChangedSquares) Board[kvp.Key].SetPiece(kvp.Value);
+                        continue;
+                    }
                 }
                 if (CurrentPlayer.SameAs(Players[0]))
                 {
@@ -703,6 +728,13 @@ namespace Dastan
             Queue.Add(Temp);
         }
 
+        public void ResetQueueBack(int position)
+        {
+            MoveOption moveToMove = Queue[Queue.Count-1];
+            Queue.RemoveAt(Queue.Count-1);
+            Queue.Insert(position - 1, moveToMove);
+        }
+
         public MoveOption GetMoveOptionInPosition(int Pos)
         {
             return Queue[Pos];
@@ -756,6 +788,11 @@ namespace Dastan
         public void UpdateMoveOptionQueueWithOffer(int Position, MoveOption NewMoveOption)
         {
             Queue.Replace(Position, NewMoveOption);
+        }
+
+        public void ResetQueueBackAfterUndo(int position)
+        {
+            Queue.ResetQueueBack(position);
         }
 
         public int GetScore()
