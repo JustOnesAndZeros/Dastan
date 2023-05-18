@@ -256,11 +256,20 @@ namespace Dastan
                     SquareIsValid = CheckSquareIsValid(StartSquareReference, true);
                 }
                 int FinishSquareReference = 0;
-                SquareIsValid = false;
-                while (!SquareIsValid)
+                if (CurrentPlayer.ChoiceIsSahm(Choice))
                 {
-                    FinishSquareReference = GetSquareReference("to move to");
-                    SquareIsValid = CheckSquareIsValid(FinishSquareReference, false);
+                    FinishSquareReference = StartSquareReference;
+                    CalculateSahmMove(CurrentPlayer.GetDirection(), StartSquareReference);
+                    CurrentPlayer.SetSahmUsed(true);
+                }
+                else
+                {
+                    SquareIsValid = false;
+                    while (!SquareIsValid)
+                    {
+                        FinishSquareReference = GetSquareReference("to move to");
+                        SquareIsValid = CheckSquareIsValid(FinishSquareReference, false);
+                    }
                 }
                 bool MoveLegal = CurrentPlayer.CheckPlayerMove(Choice, StartSquareReference, FinishSquareReference);
                 if (MoveLegal)
@@ -284,6 +293,23 @@ namespace Dastan
             }
             DisplayState();
             DisplayFinalResult();
+        }
+
+        private void CalculateSahmMove(int direction, int squareReference)
+        {
+            squareReference += direction * 10;
+            int squareIndex = GetIndexOfSquare(squareReference);
+            
+            if (squareIndex < 0 || squareIndex >= Board.Count) return;
+            
+            Square squareToCheck = Board[squareIndex];
+            if (squareToCheck.ContainsKotla()) return;
+            
+            CurrentPlayer.ChangeScore(CalculatePieceCapturePoints(squareReference));
+            squareToCheck.RemovePiece();
+            
+            CalculateSahmMove(direction, squareReference);
+            
         }
 
         private void UpdateBoard(int StartSquareReference, int FinishSquareReference)
@@ -353,11 +379,20 @@ namespace Dastan
 
         private void CreateMoveOptionOffer()
         {
+            MoveOptionOffer.Add("sahm");
             MoveOptionOffer.Add("jazair");
             MoveOptionOffer.Add("chowkidar");
             MoveOptionOffer.Add("cuirassier");
             MoveOptionOffer.Add("ryott");
             MoveOptionOffer.Add("faujdar");
+        }
+
+        private MoveOption CreateSahmMoveOption(int Direction)
+        {
+            MoveOption NewMoveOption = new MoveOption("sahm");
+            Move NewMove = new Move(0, 1 * Direction);
+            NewMoveOption.AddToPossibleMoves(NewMove);
+            return NewMoveOption;
         }
 
         private MoveOption CreateRyottMoveOption(int Direction)
@@ -442,7 +477,11 @@ namespace Dastan
 
         private MoveOption CreateMoveOption(string Name, int Direction)
         {
-            if (Name == "chowkidar")
+            if (Name == "sahm")
+            {
+                return CreateSahmMoveOption(Direction);
+            }
+            else if (Name == "chowkidar")
             {
                 return CreateChowkidarMoveOption(Direction);
             }
@@ -714,6 +753,7 @@ namespace Dastan
         private string Name;
         private int Direction, Score;
         private MoveOptionQueue Queue = new MoveOptionQueue();
+        private bool SahmUsed = false;
 
         public Player(string N, int D)
         {
@@ -776,6 +816,21 @@ namespace Dastan
         public void ChangeScore(int Amount)
         {
             Score += Amount;
+        }
+
+        public bool GetSahmStatus()
+        {
+            return SahmUsed;
+        }
+
+        public void SetSahmUsed(bool status)
+        {
+            SahmUsed = status;
+        }
+
+        public bool ChoiceIsSahm(int Pos)
+        {
+            return Queue.GetMoveOptionInPosition(Pos - 1).GetName() == "sahm";
         }
 
         public bool CheckPlayerMove(int Pos, int StartSquareReference, int FinishSquareReference)
